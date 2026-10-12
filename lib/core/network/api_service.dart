@@ -185,6 +185,8 @@ class ApiService {
       platNomor: data['plat_nomor'] ?? 'B 9123 SPV',
       nomorContainerAtauPlat: data['nomor_container_atau_plat'] ?? 'TGHU1234567',
       namaSopir: data['nama_sopir'] ?? 'Ahmad Syahrul',
+      agenForwarding: data['agen_forwarding'],
+      tujuanPengiriman: data['tujuan_pengiriman'],
       jenisProduk: data['jenis_produk'] ?? 'fiber',
       jenisPengiriman: data['jenis_pengiriman'] ?? 'export',
       cuaca: data['cuaca'] ?? 'kering',

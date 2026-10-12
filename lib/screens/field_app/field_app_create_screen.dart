@@ -24,6 +24,8 @@ class _FieldAppCreateScreenState extends State<FieldAppCreateScreen> {
   final _packingListCtrl = TextEditingController();
   final _shipmentGroupCtrl = TextEditingController();
   final _shipmentNoCtrl = TextEditingController();
+  final _agenForwardingCtrl = TextEditingController();
+  final _tujuanPengirimanCtrl = TextEditingController();
   final _platNomorCtrl = TextEditingController();
   final _containerCtrl = TextEditingController();
   final _namaSopirCtrl = TextEditingController();
@@ -52,6 +54,19 @@ class _FieldAppCreateScreenState extends State<FieldAppCreateScreen> {
   void initState() {
     super.initState();
     _loadKaryawans();
+  }
+
+  @override
+  void dispose() {
+    _packingListCtrl.dispose();
+    _shipmentGroupCtrl.dispose();
+    _shipmentNoCtrl.dispose();
+    _agenForwardingCtrl.dispose();
+    _tujuanPengirimanCtrl.dispose();
+    _platNomorCtrl.dispose();
+    _containerCtrl.dispose();
+    _namaSopirCtrl.dispose();
+    super.dispose();
   }
 
   Future<void> _loadKaryawans() async {
@@ -157,6 +172,12 @@ class _FieldAppCreateScreenState extends State<FieldAppCreateScreen> {
           if (res['nama_sopir']?.isNotEmpty == true) {
             _namaSopirCtrl.text = res['nama_sopir'];
           }
+          if (res['agen_forwarding']?.isNotEmpty == true) {
+            _agenForwardingCtrl.text = res['agen_forwarding'];
+          }
+          if (res['tujuan_pengiriman']?.isNotEmpty == true) {
+            _tujuanPengirimanCtrl.text = res['tujuan_pengiriman'];
+          }
           _ocrSummary = 'Data berhasil diekstrak via OCR Tesseract!';
         }
       });
@@ -207,9 +228,11 @@ class _FieldAppCreateScreenState extends State<FieldAppCreateScreen> {
         'packing_list_no': _packingListCtrl.text.trim(),
         'shipment_group': _shipmentGroupCtrl.text.trim(),
         'shipment_no': _shipmentNoCtrl.text.trim(),
+        'agen_forwarding': _agenForwardingCtrl.text.trim(),
+        'tujuan_pengiriman': _tujuanPengirimanCtrl.text.trim(),
         'plat_nomor': _platNomorCtrl.text.trim(),
         'nomor_container_atau_plat': _containerCtrl.text.trim(),
-        'nama_sopir': _namaSopirCtrl.text.trim().isEmpty ? '-' : _namaSopirCtrl.text.trim(),
+        'nama_sopir': _namaSopirCtrl.text.trim(),
         'cuaca': _cuaca,
         'waktu': _waktu,
         'warehouse_lokasi': _warehouseLokasi,
@@ -605,6 +628,34 @@ class _FieldAppCreateScreenState extends State<FieldAppCreateScreen> {
               return null;
             },
           ),
+          const SizedBox(height: 12),
+
+          TextFormField(
+            controller: _agenForwardingCtrl,
+            maxLines: 2,
+            minLines: 1,
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13),
+            decoration: const InputDecoration(
+              labelText: 'Agen Forwarding (Opsional)',
+              hintText: 'Contoh: PT. SAMUDERA LOGISTICS / EMKL',
+              prefixIcon: Icon(Icons.corporate_fare_rounded, size: 18, color: AppColors.brandAzure),
+              alignLabelWithHint: true,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          TextFormField(
+            controller: _tujuanPengirimanCtrl,
+            maxLines: 3,
+            minLines: 2,
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13),
+            decoration: const InputDecoration(
+              labelText: 'Tujuan Pengiriman (Opsional)',
+              hintText: 'Contoh: Pelabuhan Tanjung Priok / Gudang Surabaya',
+              prefixIcon: Icon(Icons.location_on_outlined, size: 18, color: AppColors.brandAzure),
+              alignLabelWithHint: true,
+            ),
+          ),
         ],
       ),
     );
@@ -653,10 +704,11 @@ class _FieldAppCreateScreenState extends State<FieldAppCreateScreen> {
             controller: _namaSopirCtrl,
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13),
             decoration: const InputDecoration(
-              labelText: 'Nama Sopir (Opsional)',
-              hintText: 'Contoh: Ahmad / Hendra',
+              labelText: 'Nama Sopir *',
+              hintText: 'Contoh: Ahmad',
               prefixIcon: Icon(Icons.person_pin_rounded, size: 18, color: AppColors.brandAzure),
             ),
+            validator: (v) => v == null || v.trim().isEmpty ? 'Nama sopir wajib diisi' : null,
           ),
         ],
       ),

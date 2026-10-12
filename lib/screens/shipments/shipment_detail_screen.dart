@@ -345,6 +345,10 @@ class _ShipmentDetailScreenState extends State<ShipmentDetailScreen> {
                   _buildDetailRow('No. Surat Jalan / PL', s.packingListNo, isCode: true),
                   _buildDetailRow('Shipment Group', s.shipmentGroup, isCode: true),
                   _buildDetailRow('Shipment No', s.shipmentNo, isCode: true),
+                  if (s.agenForwarding != null && s.agenForwarding!.isNotEmpty)
+                    _buildDetailRow('Agen Forwarding', s.agenForwarding!),
+                  if (s.tujuanPengiriman != null && s.tujuanPengiriman!.isNotEmpty)
+                    _buildDetailRow('Tujuan Pengiriman', s.tujuanPengiriman!),
                   _buildDetailRow('Jenis Produk', s.jenisProduk.toUpperCase()),
                   _buildDetailRow('Jenis Pengiriman', s.jenisPengiriman.toUpperCase()),
                   _buildDetailRow('Lokasi Warehouse', 'Warehouse ${s.warehouseLokasi.toUpperCase()}'),

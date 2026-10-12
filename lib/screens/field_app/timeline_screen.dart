@@ -269,6 +269,10 @@ class _TimelineScreenState extends State<TimelineScreen> {
         'waktu_kedatangan_container': _waktuKedatangan!.toIso8601String(),
         'waktu_keberangkatan_container': _waktuKeberangkatan!.toIso8601String(),
         'packing_list_no': _currentShipment.packingListNo,
+        if (_currentShipment.tujuanPengiriman != null && _currentShipment.tujuanPengiriman!.isNotEmpty)
+          'tujuan_pengiriman': _currentShipment.tujuanPengiriman,
+        if (_currentShipment.agenForwarding != null && _currentShipment.agenForwarding!.isNotEmpty)
+          'agen_forwarding': _currentShipment.agenForwarding,
       };
 
       await _api.finalizeShipment(_currentShipment.id, payload);
@@ -511,6 +515,10 @@ class _TimelineScreenState extends State<TimelineScreen> {
               _buildWhiteMeta('Shpt', _currentShipment.shipmentNo),
               _buildWhiteMeta('Plat', _currentShipment.platNomor),
               _buildWhiteMeta('Cont', _currentShipment.nomorContainerAtauPlat),
+              if (_currentShipment.agenForwarding != null && _currentShipment.agenForwarding!.isNotEmpty)
+                _buildWhiteMeta('Fwd', _currentShipment.agenForwarding!),
+              if (_currentShipment.tujuanPengiriman != null && _currentShipment.tujuanPengiriman!.isNotEmpty)
+                _buildWhiteMeta('Tujuan', _currentShipment.tujuanPengiriman!),
             ],
           ),
         ],
@@ -816,16 +824,23 @@ class _TimelineScreenState extends State<TimelineScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Foto Tambahan / Ekstra',
-                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 13.5, color: AppColors.textHeading),
+              Expanded(
+                child: Text(
+                  'Foto Tambahan / Ekstra',
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 13.5, color: AppColors.textHeading),
+                ),
               ),
               TextButton.icon(
                 onPressed: _addExtraPhoto,
-                icon: const Icon(Icons.add_a_photo_rounded, size: 16),
+                icon: const Icon(Icons.add_a_photo_rounded, size: 15),
                 label: Text(
                   'Tambah Foto',
                   style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.brandAzure),
+                ),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
               ),
             ],
@@ -881,12 +896,35 @@ class _TimelineScreenState extends State<TimelineScreen> {
             time: _waktuKedatangan,
             onSetNow: () => setState(() => _waktuKedatangan = DateTime.now()),
             onPick: () async {
-              final pickedDate = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2025), lastDate: DateTime(2030));
+              final pickedDate = await showDatePicker(
+                context: context,
+                initialDate: _waktuKedatangan ?? DateTime.now(),
+                firstDate: DateTime(2025),
+                lastDate: DateTime(2030),
+              );
               if (pickedDate != null && mounted) {
-                final pickedTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+                final initialTime = _waktuKedatangan != null
+                    ? TimeOfDay(hour: _waktuKedatangan!.hour, minute: _waktuKedatangan!.minute)
+                    : TimeOfDay.now();
+                final pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: initialTime,
+                  builder: (context, child) {
+                    return MediaQuery(
+                      data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                      child: child!,
+                    );
+                  },
+                );
                 if (pickedTime != null) {
                   setState(() {
-                    _waktuKedatangan = DateTime(pickedDate.year, pickedDate.month, pickedDate.day, pickedTime.hour, pickedTime.minute);
+                    _waktuKedatangan = DateTime(
+                      pickedDate.year,
+                      pickedDate.month,
+                      pickedDate.day,
+                      pickedTime.hour,
+                      pickedTime.minute,
+                    );
                   });
                 }
               }
@@ -900,12 +938,35 @@ class _TimelineScreenState extends State<TimelineScreen> {
             time: _waktuKeberangkatan,
             onSetNow: () => setState(() => _waktuKeberangkatan = DateTime.now()),
             onPick: () async {
-              final pickedDate = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2025), lastDate: DateTime(2030));
+              final pickedDate = await showDatePicker(
+                context: context,
+                initialDate: _waktuKeberangkatan ?? DateTime.now(),
+                firstDate: DateTime(2025),
+                lastDate: DateTime(2030),
+              );
               if (pickedDate != null && mounted) {
-                final pickedTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+                final initialTime = _waktuKeberangkatan != null
+                    ? TimeOfDay(hour: _waktuKeberangkatan!.hour, minute: _waktuKeberangkatan!.minute)
+                    : TimeOfDay.now();
+                final pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: initialTime,
+                  builder: (context, child) {
+                    return MediaQuery(
+                      data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                      child: child!,
+                    );
+                  },
+                );
                 if (pickedTime != null) {
                   setState(() {
-                    _waktuKeberangkatan = DateTime(pickedDate.year, pickedDate.month, pickedDate.day, pickedTime.hour, pickedTime.minute);
+                    _waktuKeberangkatan = DateTime(
+                      pickedDate.year,
+                      pickedDate.month,
+                      pickedDate.day,
+                      pickedTime.hour,
+                      pickedTime.minute,
+                    );
                   });
                 }
               }
